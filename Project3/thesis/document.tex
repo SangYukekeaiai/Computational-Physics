@@ -1,0 +1,962 @@
+\documentclass{article}
+\usepackage{ctex}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\graphicspath{{figure/}}
+\usepackage[section]{placeins}
+\usepackage{float}
+\usepackage{appendix}
+\usepackage{amstext}
+\usepackage{listings}
+\lstset{language=Matlab}%语言
+\usepackage{geometry}
+\geometry{a4paper,scale=0.8}
+\title{一维定态薛定谔方程本征值求解的三种方法比较}
+\date{2020.6.9}
+\author{俞炀}
+
+\begin{document}
+	\maketitle
+	\begin{abstract}
+	文章以求解一维定态薛定谔方程为例，介绍了打靶法ode45、Cowling算法、矩阵法、伪扩散方法三种不同的求解本征问题的数值算法。其中对于一维平底势阱与一维二次势阱本征值与本征函数进行了详细求解作图。文章从求解定态薛定谔方程开始，分析比对了三种方法的优劣，并对其适应的范围做出了分析，从而对于求解类似问题时采用何种较优手段有较为准确的认识。	
+		
+		\textbf{关键词：}\qquad 定态薛定谔方程  \qquad 打靶法 \qquad 矩阵法 \qquad 伪扩散法 
+	\end{abstract}
+	\section{定态薛定谔方程的导出}
+		\subsection{方程通解}
+			由量子力学的学习，我们可知含时的薛定谔方程可以表述成：
+			\begin{equation}
+				i\hbar\frac{\partial \Psi}{\partial t} = \hat{H}\Psi\label{Schrodinger}
+			\end{equation}
+		
+			其中，$\hat{H} = -\frac{\hbar^2}{2m}\nabla^2+V$为哈密顿算符。
+		
+			对于该方程，我们通过分离时空变量，得到定态薛定谔方程：
+		
+			设$\Psi(\vec{r},t) = \Psi(\vec{r})T(t)$,代入方程\ref{Schrodinger}中，对于两边同时除以$\Psi$,可得：
+			\begin{equation}
+				\frac{1}{T}i\hbar T^{'}(t) = \frac{1}{\Psi}\hat{H}\Psi(\vec{r})\label{Schrodinger2}
+			\end{equation}
+		
+			因为方程\ref{Schrodinger2}左侧只是时间t的函数，右侧只是空间位置的函数，可知此等式等于一常数。令此常数为E,我们得到一个关于时间的常微分方程和一个只和空间有关的偏微分方程:
+			\begin{equation}
+				T^{'}+i\frac{E}{\hbar}T=0\label{time}
+			\end{equation}
+			\begin{equation}
+				\hat{H}\Psi = E\Psi\label{space}
+			\end{equation}
+		
+			式\ref{time}可轻松解出：$T = \exp(-i\frac{E}{\hbar}t)$。式\ref{space}为我们所需求解的定态薛定谔方程。其中E为体系的能量，其为一系列离散值，即哈密顿算符在给定边界条件下的本征值。
+		
+			在一维情况下，式\ref{space}可以化为：
+			\begin{equation}
+				(-\frac{\hbar^2}{2m}\frac{d^2}{dx^2}+V)\Psi = E\Psi
+			\end{equation}
+		\subsection{条件设定}
+		
+			
+		
+			%标序号粉分条叙述
+			\begin{itemize}	
+				\item 关于自变量x,其取值范围我们定为$x\in[-1,1]$(在某些情况下取值范围为[0,1],在x取值为[-1,1]时，将会具体标出)。%序号a
+				\item 对势能项进行约化，即令$V = V_{0}\nu(x)$
+			\end{itemize}
+		经过简单计算，我们可得到约化形式的一维定态薛定谔方程：
+			\begin{equation}
+				(-\frac{1}{\gamma^2}\frac{d^2}{dx^2}+\nu(x)-\varepsilon)\Psi=0
+			\end{equation}
+		
+		其中$\gamma = (\frac{2ma^2V_0}{\hbar^2})^(\frac{1}{2})$,$\varepsilon = \frac{E}{V_0}$。
+		
+		\subsection{方势阱的薛定谔方程解析求解}
+			求解方势阱时，我们令$\nu(x) =\nu_0=0$,此时，薛定谔方程变为：
+			\begin{equation}
+				\frac{d^2\Psi}{dx^2}+k^2\Psi=0
+			\end{equation}
+			
+			其中：$k^2 = \gamma^2\varepsilon$。
+			
+			这是一个常系数二阶线性常微分方程。其通解为：
+			\begin{equation}
+			\label{solution_constant}
+			\Psi_{n}=\left\{
+			\begin{aligned}
+			A_{n}cos(\frac{n\pi x}{2}) & , &n=\text{奇数} ,\\
+			A_{n}sin(\frac{n\pi x}{2})& , & n=\text{偶数} 
+			\end{aligned}
+			\right.
+			\end{equation}
+			由此，我们得到其本征值为$k_n=\frac{n\pi}{2}$,相应的本正能量$\varepsilon_n=\frac{1}{\gamma^2}(\frac{n\pi}{2})^{2}$。
+			
+		\subsection{二次势的薛定谔方程的解析求解}
+			与量子力学中相对照，可知二次势与一维谐振子势相似：
+			\begin{equation}
+				V(x) = \frac{1}{2}m\omega^2x^2
+			\end{equation}
+			其势函数的解析解为厄密多项式，由于其过于繁琐，在此不再罗列；其能量本征值为：
+			\begin{equation}
+				E = \frac{1}{2}\hbar\omega+n\hbar\omega
+			\end{equation}
+			在求解不同形式的二次势的情况下，只需要将一维谐振子势进行平移伸缩即可。
+			
+			此处求解的二次势区间为$x\in[-1,1]$,势函数为$V(x) = 2500(\frac{x^2}{2}-1)$。
+			令$\frac{\hbar}{2m}=1$,我们可得薛定谔方程为：
+			\begin{equation}
+				\frac{d^2}{dx^2}\Psi+[E-2500(\frac{x^2}{2}-1)\Psi]=0\label{solution_square}
+			\end{equation}
+			
+			令式\ref{solution_square}中$E^{'}=E+2500$,代入谐振子薛定谔方程中，可得：
+			
+			\begin{equation}
+				\frac{1}{2}m\omega^{2}=1250
+			\end{equation}
+			
+			解得：$\omega = \sqrt{\frac{2500}{m}}=\frac{50\sqrt{2}}{\hbar}$
+			
+			代入谐振子能量本征值，可得：
+		
+			\begin{equation}
+				E^{'} = (\frac{1}{2}+n)\hbar \omega = (\frac{1}{2}+n)\times 50\sqrt{2}\approx 	70.710678\times(\frac{1}{2}+n)
+			\end{equation}
+			
+			根据$E^{'}=E+2500$可得：
+			
+			\begin{equation}
+				E_{n}=(\frac{1}{2}+n)\times 70.710678-2500\label{energy}
+			\end{equation}
+			
+			由上式\ref{energy}可知，我们所求得地二次势基态能量本征值数值大小应为：$E_{1}=-2464.6447$
+			
+	\section{打靶法}
+		\subsection{简介}
+			打靶法,即：猜一个本征值，将其代入方程直接积分，并观察得到的端点值是否满足相应的边界条件，如果不满足就改变猜测的本征值继续进行同样的过程。此过程与枪手打靶类似，因此被形象地称为打靶法。另一方面，我们对方程进行积分得到的端点值依赖于方程的本征值,因此，端点值可以看成是本征值的函数。对于端点值连续依赖本征值的情形，此问题即转化成为方程求根问题。这个时候为了稳定，我们通常选择最简单的搜索法来进行这一个过程。因此，打靶法拆开来看其实就是一个求解方程的过程与方程求根的结合。
+			
+			在使用打靶法求解薛定谔方程中方势阱、二次势阱的过程中，我们分别采用了Numerove算法以及使用Matlab自带的ode45算法求解微分方程。我们将以表格形式分别给出方势阱和二次势阱的本征值，并以图象形式表现两者的本征函数。
+		\subsection{一维薛定谔方程——方势阱求解本征值、本征函数}
+			\subsubsection{本征值}
+				\begin{center}
+				\begin{tabular}{|c|c|c|c|c|}
+					\hline
+					初始能量&本征能量(ode45)&本正能量(Numerove)&量子数&解析能量本征值\\
+					\hline
+					2.4&2.4674&2.4674&1&2.4674\\
+					\hline
+					9.8&9.8691&9.8696&2&9.8696\\
+					\hline
+					22.1&22.1950&22.2066&3&22.2066\\
+					\hline
+				\end{tabular}
+				\end{center}	
+			\subsubsection{本征函数(图像)}
+				\begin{figure}[H]%H表示优先放置的图片位置
+					\centering
+				
+					\subfigure[n=1时ode45求解得到的本征函数]{
+						\begin{minipage}[t]{0.4\linewidth}
+							\centering
+							\includegraphics[width=2in]{ode45_1.png}
+							\label{ode45_1}
+							%\caption{fig1}
+						\end{minipage}%
+					}%
+					\subfigure[n=1时Numerove求解得到的本征函数]{
+						\begin{minipage}[t]{0.4\linewidth}
+							\centering
+							\includegraphics[width=2in]{num_1.png}
+							\label{num_1}
+							%\caption{fig2}
+						\end{minipage}%
+					}%	%这个回车键很重要 \quad也可以
+					\quad
+					\subfigure[n=2时ode45求解得到的本征函数]{
+						\begin{minipage}[t]{0.4\linewidth}
+							\centering
+							\includegraphics[width=2in]{ode45_2.png}
+							\label{ode45_2}
+							%\caption{fig2}
+						\end{minipage}
+					}%
+					\subfigure[n=2时Numerove求解得到的本征函数]{
+						\begin{minipage}[t]{0.4\linewidth}
+							\centering
+							\includegraphics[width=2in]{num_2.png}
+							\label{num_2}
+							%\caption{fig2}
+						\end{minipage}
+					}%
+					\quad	
+					\subfigure[n=3时ode45求解得到的本征函数]{
+						\begin{minipage}[t]{0.4\linewidth}
+							\centering
+							\includegraphics[width=2in]{ode45_3.png}
+							\label{ode45_3}
+							%\caption{fig2}
+						\end{minipage}
+					}%
+					\subfigure[n=3时Numerove求解得到的本征函数]{
+						\begin{minipage}[t]{0.4\linewidth}
+							\centering
+							\includegraphics[width=2in]{num_3.png}
+							\label{num_3}
+							%\caption{fig2}
+						\end{minipage}
+					}%
+					\centering
+					\caption{一维平底势阱下量子数分别为1、2、3时使用ode45与numerove算法求解得出的势函数}
+					\label{dabafa_c_tot}
+				\end{figure}
+        \subsection{一维薛定谔方程——二次势阱求解本征值、本征函数}
+            \subsubsection{本征值}
+            	\begin{center}
+            	\begin{tabular}{|c|c|c|c|c|}
+            		\hline
+            		初始能量&本征能量(ode45)&本正能量(Numerove)&量子数&解析能量本征值\\
+            		\hline
+            		-2465&-2.4646e+03&-2.4646e+03&1&-2464.6447\\
+            		\hline
+            		-2394&-2394&-2.3939e+03&2&-2393.9340\\
+            		\hline
+            		-2324&-2324&-2.3232e+03&3&-2323.2893\\
+            		\hline
+            	\end{tabular}
+            	\end{center}	
+            \subsubsection{本征函数(图像)}
+            	\begin{figure}[H]%H表示优先放置的图片位置
+            		\centering
+            	
+            		\subfigure[n=1时ode45求解得到的本征函数]{
+            			\begin{minipage}[t]{0.4\linewidth}
+            				\centering
+            				\includegraphics[width=2in]{ode45_s1.png}
+            				\label{ode45_s1}
+            			%\caption{fig1}
+            			\end{minipage}%
+            		}%
+            		\subfigure[n=1时Numerove求解得到的本征函数]{
+            			\begin{minipage}[t]{0.4\linewidth}
+            				\centering
+            				\includegraphics[width=2in]{num_s1.png}
+            				\label{num_s1}
+            				%\caption{fig2}
+            			\end{minipage}%
+            		}%	%这个回车键很重要 \quad也可以
+            		\quad
+            		\subfigure[n=2时ode45求解得到的本征函数]{
+            			\begin{minipage}[t]{0.4\linewidth}
+            				\centering
+            				\includegraphics[width=2in]{ode45_s2.png}
+            				\label{ode45_s2}
+            				%\caption{fig2}
+            			\end{minipage}
+            		}%
+            		\subfigure[n=2时Numerove求解得到的本征函数]{
+            			\begin{minipage}[t]{0.4\linewidth}
+            				\centering
+            				\includegraphics[width=2in]{num_s2.png}
+            				\label{num_s2}
+            				%\caption{fig2}
+            			\end{minipage}
+            		}%
+            		\quad	
+            		\subfigure[n=3时ode45求解得到的本征函数]{
+            			\begin{minipage}[t]{0.4\linewidth}
+            				\centering
+            				\includegraphics[width=2in]{ode45_s3.png}
+            				\label{ode45_s3}
+            				%\caption{fig2}
+            			\end{minipage}
+            		}%
+            		\subfigure[n=3时Numerove求解得到的本征函数]{
+            			\begin{minipage}[t]{0.4\linewidth}
+            				\centering
+            				\includegraphics[width=2in]{num_s3.png}
+            				\label{num_s3}
+            				%\caption{fig2}
+            			\end{minipage}
+            		}%
+            		\centering
+            		\caption{一维二次势阱下量子数分别为1、2、3时使用ode45与numerove算法求解得出的势函数}
+            		\label{dabafa_s_tot}			
+				\end{figure}
+		\section{分析}
+			\begin{itemize}	
+				\item[a]一维方势阱由于此方程不存在转折点，因此无论是ode45还是numerove算法均采用从x的一边求解至另一端；一维二次势阱中ode45是从x的两端开始求解的，而numerove算法在此出现了问题，因此依然采用从一边求解至另一边，通过比较另一边边值条件与计算值之间的正负进行步长的调整。由本征值可得出，无论是哪一种势，Numerove算法的计算值均优于ode45算法的计算值；
+				\item[b]由于一维二次势阱本征值之间相差巨大，因此如果猜测值与本征值相差很远，将会出现运算时间极长的情况；
+				\item[c]无论是ode45还是numerove算法，两者均不能计算多个本征值，输入一个猜测值只能计算出一个本征值。
+			\end{itemize}
+	\section{矩阵法}
+		\subsection{简介}
+			矩阵方法的基本思想就是偏微分方程的差分方法。当我们把偏微分方程中的微商用差分代替之后，我们就会得到一个差分方程组。本来无穷多个点的情况被我们用有限个点来代替。对于线性方程的情况，我们得到的方程也将是线性方程组，此时偏微分算子即化为了矩阵。式\ref{space}的定态薛定谔方程本质上即为一个本征方程，它告诉我们系统的能量是哈密顿算符的本征态值。现在我们用差分方法来处理哈密顿算符	:
+			\begin{equation}
+				\hat{H}=-\frac{1}{\gamma^2}\frac{d^2}{dx^2}+\nu(x)=
+				\begin{bmatrix}
+				-2  &  1  & \quad & \quad & \quad\\
+				1  &  -2  & 1 & \quad & \quad\\
+				\cdots & \cdots & \cdots & \cdots &\cdots\\
+				\quad & \quad & 1 & -2 & 1\\
+				\quad & \quad & \quad & 1 & -2\\
+				\end{bmatrix} + 
+				\begin{bmatrix}
+					\nu_1  &  \quad  & \quad & \quad & \quad\\
+					\quad  &  \nu_2  & \quad & \quad & \quad\\
+					\quad & \quad & \ddots & \quad &\quad\\
+					\quad & \quad & \quad & \ddots & \quad\\
+					\quad & \quad & \quad & \quad & \nu_n\\
+				\end{bmatrix}
+			\end{equation}
+			
+			此时，哈密顿算符就变成了一个矩阵，所以问题自然而然的就化为了求这个矩阵的本征值问题。我们通过逆名迭代法求解其本征值与本征向量。以下是在矩阵法下得到的一维方势阱、一维二次势阱下的本征值和本征函数：
+		\subsection{一维薛定谔方程——方势阱求解本征值、本征函数}
+			\subsubsection{本征值}
+			\begin{center}
+				\begin{tabular}{|c|c|c|}
+					\hline
+					本征能量&量子数&解析能量本征值\\
+					\hline
+					9.8696&1&9.8696\\
+					\hline
+					39.4784&2&39.4784\\
+					\hline
+					88.8264&3&88.8264\\
+					\hline
+					398741.8874&201&398741.8874\\
+					\hline
+				\end{tabular}
+		\end{center}	
+		\subsubsection{本征函数(图像)}
+		\begin{figure}[H]%H表示优先放置的图片位置
+			\centering
+			
+			\subfigure[n=1时矩阵法求解得到的本征函数]{
+				\begin{minipage}[t]{0.4\linewidth}
+					\centering
+					\includegraphics[width=2in]{m_c1.png}
+					\label{m_c1}
+					%\caption{fig1}
+				\end{minipage}%
+			}%
+			\subfigure[n=2时矩阵法求解得到的本征函数]{
+				\begin{minipage}[t]{0.4\linewidth}
+					\centering
+					\includegraphics[width=2in]{m_c2.png}
+					\label{m_c2}
+					%\caption{fig2}
+				\end{minipage}%
+			}%	%这个回车键很重要 \quad也可以
+			\quad
+			\subfigure[n=3时矩阵法求解得到的本征函数]{
+				\begin{minipage}[t]{0.4\linewidth}
+					\centering
+					\includegraphics[width=2in]{m_c3.png}
+					\label{m_c3}
+					%\caption{fig2}
+				\end{minipage}
+			}%
+			\subfigure[n=201时矩阵法求解得到的本征函数]{
+				\begin{minipage}[t]{0.4\linewidth}
+					\centering
+					\includegraphics[width=2in]{m_cn.png}
+					\label{m_cn}
+					%\caption{fig2}
+				\end{minipage}
+			}%
+			\centering
+			\caption{一维平底势阱下量子数分别为1、2、3、201时使用矩阵法求解得出的势函数}
+			\label{matrix_c_tot}
+		\end{figure}
+		\subsection{一维薛定谔方程——二次势阱求解本征值、本征函数}
+			\subsubsection{本征值}
+			\begin{center}
+				\begin{tabular}{|c|c|c|}
+					\hline
+					本征能量&量子数&解析能量本征值\\
+					\hline
+					-2400.0156&1&-2464.6447\\
+					\hline
+					-2200.0781&2&-2393.9340\\
+					\hline
+					-2000.2031&3&-2323.2893\\
+					\hline
+					11928.4770&201&11748.2016\\
+					\hline
+				\end{tabular}
+			\end{center}	
+			\subsubsection{本征函数(图像)}
+			\begin{figure}[H]%H表示优先放置的图片位置
+				\centering
+			
+				\subfigure[n=1时矩阵法求解得到的本征函数]{
+					\begin{minipage}[t]{0.4\linewidth}
+						\centering
+						\includegraphics[width=2in]{m_s1.png}
+						\label{m_s1}
+						%\caption{fig1}
+					\end{minipage}%
+				}%
+				\subfigure[n=2时矩阵法求解得到的本征函数]{
+					\begin{minipage}[t]{0.4\linewidth}
+						\centering
+						\includegraphics[width=2in]{m_s2.png}
+						\label{m_s2}
+						%\caption{fig2}
+					\end{minipage}%
+				}%	%这个回车键很重要 \quad也可以
+				\quad
+				\subfigure[n=3时矩阵法求解得到的本征函数]{
+					\begin{minipage}[t]{0.4\linewidth}
+						\centering
+						\includegraphics[width=2in]{m_s3.png}
+						\label{m_s3}
+						%\caption{fig2}
+					\end{minipage}
+				}%
+				\subfigure[n=201时矩阵法求解得到的本征函数]{
+					\begin{minipage}[t]{0.4\linewidth}
+						\centering
+						\includegraphics[width=2in]{m_sn.png}
+						\label{m_sn}
+						%\caption{fig2}
+					\end{minipage}
+				}%
+				\centering
+				\caption{一维二次势阱下量子数分别为1、2、3、201时使用矩阵法求解得出的势函数}
+				\label{matrix_s_tot}
+			\end{figure}
+		\subsection{分析}	
+			\begin{itemize}	
+				\item[a]由矩阵法解出的一维方势阱下的薛定谔方程的本征值与本征函数与解析解符合得非常好，到n=201时依然保持着非常稳定的状态，且运行速度较快；
+				\item[b]由矩阵法解出得一维二次势阱下得薛定谔方程的本征值与解析解有较大出入，绝对误差达到了几十；
+				\item[c]由于逆名迭代法需要有一组本征值的猜测解，此处是根据其本征值解析解的数值给出的猜测解，因此运行较快，在实际情况中求解本征值的过程将减缓许多。
+			\end{itemize}
+	\section{伪扩散法}
+		\subsection{简介}
+			由含时薛定谔方程：
+			\begin{equation}
+				\hat{H}\Psi=E\Psi
+			\end{equation}
+			
+			式中E为其本征值。此时我们考虑如下扩散方程\ref{expend}
+			\begin{equation}
+				\frac{\partial \Psi}{\partial \tau}=-\hat{H}\Psi
+			\end{equation}
+			
+			分离变量，可得时间部分：
+			\begin{equation}
+				T'+ET=0\label{t}
+			\end{equation}
+			
+			空间部分与原先的定态薛定谔方程相同。
+			
+			方程\ref{t}的解为：
+			
+			\begin{equation}
+				T=\exp^{-E\tau}\label{sol_T}
+			\end{equation}
+			
+			由式\ref{sol_T}可知，只要本征值 ，这个本征态就将随时间指数衰减，而且衰减速度正好是相应的本征值。由于哈密顿算符是一个厄米算符，它的本征态构成一组完备正交基。于是任何一个波函数可以在这组基上展开。之后，我们可以想见，对于任何一个初始的波函数，在这样一个随时间演化的过程之后，本征值最小的分量那个将在最后的结果占据主导地位。而其他成分均被过滤。由此可知，我们可以轻松获得定态薛定谔方程的第一本征态。伪扩散法的求解可运用欧拉法或后项欧拉法求解。下图分别为由方势阱与二次势阱求得的波函数：
+				\subsection{一维薛定谔方程——方势阱求解第一本征态本征函数图像}
+					\begin{figure}[H]
+						\centering
+						\includegraphics[scale=0.5]{e_c}
+						\caption{一维薛定谔方程方势阱第一本征态本征函数图像}\label{e_c}
+					\end{figure}
+				
+				其求得的本征值为：9.8493，与解析解求得的本征值9.8696有一定的差距；
+				\subsection{一维薛定谔方程——二次势阱求解第一本征态本征函数图像}
+					\begin{figure}[H]
+						\centering
+						\includegraphics[scale=0.5]{e_s}
+						\caption{一维薛定谔方程二次势阱第一本征态本征函数图像}\label{e_s}
+					\end{figure}
+		
+				其求得的本征值为：-2491.1614,同样，其与解析解得出的本征值-2464.6447有一定差距。
+	\section{总结}
+		\begin{itemize}	
+			\item[打靶法]打靶法适合求解已大致知晓本征值范围的情形。其原理依然是方程求根。其对于对参数敏感的方程不方便处理，无法保证其收敛性；另外，由于在处理实际问题是我们不清楚其本征态，在遍历的过程中，需要花费较多的时间；其优点是，所求的本征值与本征态相对精准；
+			\item[矩阵法]矩阵法适合求解大量本征值的问题。其运算速度较快，能一次性求出从基态到几百激发态的本征值与本征函数；可是其精度与求解的势函数有关，在一些情况下其求解到很后面依然保持稳定，而在一些情况下后面的值非常不稳定。
+			\item[伪扩散法]伪扩散法无论是从精确度，运算数量都位于前两者中间，其缺点也存在，如需计算第一激发态上的本征函数与本征值，其需从基态开始计算并剔除基态、第一激发态……
+		\end{itemize}	
+		
+		综上：打靶法、矩阵法、伪扩散法各有其优势与劣势，在不同问题的求解上表现出了不同的特性。在实际解决问题的过程中，我们需要对具体问题具体分析，寻找适合我们求解的方法。	
+	\begin{appendix}%附录（代码内容）
+		\section{ode45求解一维方势阱问题}
+		\begin{lstlisting}	
+		%函数文件
+		function dydx = test2(x,y)
+		global e1 V0
+		dydx = [y(2);(-e1+V0)*y(1)];
+			
+		%运行文件
+		clc;
+		clear all;
+		global e1 V0;
+		tol = 1e-6; de = 0.0001; e1 = 22.1; V0 = 0;
+			
+		[x1,ul] = ode45(@test2,[-1,1],[0 0.0001]);
+		%从左往右积分
+		f0 = ul(length(x1),1)-0;
+		%判断斜率是否相等
+		while (abs(de)>tol)
+		e1 = e1 +de;
+		[x1,ul] = ode45(@test2,[-1,1],[0 0.0001]);
+		f1 = ul(length(x1),1)-0;
+		if (f0*f1<=0)
+		e1 = e1-de;
+		de = de./2;
+		end
+		end
+		sum = 0;
+		for i = 1: length(x1)-1
+		h = x1(i+1)-x1(i);
+		sum = (0.5.*(ul(i)+ul(i+1))).^2.*h+sum;
+		end
+		for i = 1:length(x1)
+		ul(i) = ul(i)./sum.^(1/2);
+		end
+		e1
+			
+			
+			plot(x1,ul(:,1))
+			axis([-1 1 -inf inf])
+		\end{lstlisting}
+		\section{ode45求解一二次方势阱问题}
+		\begin{lstlisting}	
+		%函数文件
+		function dydx = test(x,y)
+		global e1
+		dydx = [y(2);(-e1+50^2.*(x^2./2-1))*y(1)];
+		
+		%运行文件
+		clc;clear all;
+		global e1;
+		tol = 1e-6; de = 0.0001; e1 = -2324;
+		xturn = 0;
+		%xturn = -sqrt(2*(e1+1));
+		[x1,ul] = ...
+		ode45(@test,[-1,xturn],[0 0.0001]);
+		%从左往右积分
+		[x2,ur] = ...
+		ode45(@test,[1,xturn],[0 0.0001]);
+		%从右往左积分
+		temp1 = ur(length(ur),1);%归一化第一步
+		ur(:,:) = ul(length(ul),1)./...
+		temp1.*ur(:,:);%归一化第二步
+		f0 = ul(length(x1),2)-...
+		ur(length(x2),2);
+		%判断斜率是否相等
+		while (abs(de)>tol)
+		e1 = e1 +de;
+		xturn = -sqrt(abs(2*(e1/2500+1)));
+		[x1,ul] = ode45(@test,[-1,xturn],[0 0.0001]);
+		[x2,ur] = ode45(@test,[1,xturn],[0 0.0001]);
+		temp2 = ur(length(ur),1);
+		%归一化第一步
+		ur(:,:) = ul(length(x1),1)./temp2.*ur(:,:);
+		%归一化第二步
+		f1 = ul(length(x1),2)-ur(length(x2),2);
+		if (f0.*f1<0||f0.*f1==0)
+		e1 = e1-de;
+		de = de./2;
+		end
+		end
+		for k = 1:length(x2)
+		ur_fixed(k,:) = ...
+		ur(length(x2)-k+1,:);
+		x2_fixed(k) = x2(length(x2)-k+1);
+		end
+		u_tot = [ul(:,1);ur_fixed(:,1)];
+		x_tot = [x1 ; x2_fixed'];
+		
+		sum = 0;
+		for s = 1:length(x_tot)-1
+		h(s) = x_tot(s+1)-x_tot(s);
+		sum = (0.5.*(u_tot(s)+u_tot(s+1)))...
+		.^2.*h(s)+sum;
+		end
+		for r = 1:length(x_tot)
+		u_tot(r) = u_tot(r)./sum.^(1/2);
+		end
+		
+		e1
+		%x1(length(ul))
+		%x2(length(ur))
+		
+		plot(x1,ul(:,1),x2,ur(:,1));
+		figure
+		\end{lstlisting}
+		\section{Numerove算法求解一维方势阱问题}
+		\begin{lstlisting}	
+		%函数文件
+		function U = numerove(N,H,Q,S,U)
+		
+		G = H*H/12.0;
+		for i = 2:1:N-1
+		C0 = 1.0+G.*Q(i-1);
+		C1 = 2.0-10.0.*G.*Q(i);
+		C2 = 1.0+G.*Q(i+1);
+		D = G.*(S(i+1)+S(i-1)+10.0*S(i));
+		UTMP = C1*U(i)-C0*U(i-1)+D;
+		U(i+1) = UTMP/C2;
+		end
+		
+		%运行文件
+		clc;clear all;
+		global e1 V0;
+		tol = 1e-6; de = 0.0001; e1 = 9.8; V0 = 0;
+		h = 0.0001;
+		x = -1:h:-1;
+		n1 = length(1:-h:-1);
+		x1 = 1:-h:-1;
+		u1(1) = 0;
+		u1(2) = 0.0001;
+		Q1 = zeros(1,n1);
+		S1 = ones(1,n1).*(e1-V0);
+		u1 = numerove(n1,-h,S1,Q1,u1);%从右往左积分
+		f0 = u1(n1)-0;
+		while (abs(de)>tol)
+		e1 = e1 +de;
+		S1 = ones(1,n1).*(e1-V0);
+		u1 = numerove(n1,-h,S1,Q1,u1);%从右往左积分
+		f1 = u1(n1) - 0;
+		if (f0.*f1<0)
+		e1 = e1-de;
+		de = de./2;
+		end
+		end
+		sum = 0;
+		for i = 1: length(x1)-1
+		sum = (0.5.*(u1(i)+u1(i+1))).^2.*h+sum;
+		end
+		for i = 1:length(x1)
+		u1(i) = u1(i)./sum.^(1/2);
+		end
+		e1
+		u1(1:length(x1)) = u1(length(x1):-1:1)
+		
+		plot(x1,u1(:))
+		axis([-1 1 -inf inf])
+		\end{lstlisting}
+		\section{Numerove算法解决一维二次势阱问题}
+		\begin{lstlisting}	
+		%函数文件
+		function U = numerove(N,H,Q,S,U)
+		
+		G = H*H/12.0;
+		for i = 2:1:N-1
+		C0 = 1.0+G.*Q(i-1);
+		C1 = 2.0-10.0.*G.*Q(i);
+		C2 = 1.0+G.*Q(i+1);
+		D = G.*(S(i+1)+S(i-1)+10.0*S(i));
+		UTMP = C1*U(i)-C0*U(i-1)+D;
+		U(i+1) = UTMP/C2;
+		end
+		
+		%运行文件
+		
+		\end{lstlisting}
+		\section{段落}
+		\begin{lstlisting}	
+		%具体代码内容	
+		clc;clear all;
+		global e1 V0;
+		tol = 1e-6; de = 0.0001;...
+		 e1 = -2324; V0 = 0;
+		h = 0.0001;
+		n1 = length(-1:h:1);
+		x1 = -1:h:1;
+		u1(1) = 0;
+		u1(2) = 0.0001;
+		Q1 = zeros(1,n1);
+		S1 = ones(1,n1).*...
+		(e1-50.^2.*(x1.^2./2-1));
+		u1 = ...
+		numerove(n1,h,S1,Q1,u1);
+		%从右往左积分
+		f0 = u1(n1)-0;
+		istep = 0;
+		while (abs(de)>tol)
+		e1 = e1 +de;
+		Q1 = zeros(1,n1);
+		S1 = ones(1,n1).*...
+		(e1-50.^2.*(x1.^2./2-1));
+		u1 = numerove(n1,h,S1,Q1,u1);
+		%从右往左积分
+		f1 = u1(n1) - 0;
+		if (f0.*f1<=0)
+		e1 = e1-de;
+		de = de./2;
+		end
+		istep = istep + 1;
+		if (istep >= 187)
+		
+		end
+		%plot(x1,u1),pause(0.05);
+		end
+		sum = 0;
+		for i = 1: length(x1)-1
+		sum = (0.5.*(u1(i)+u1(i+1))).^2.*h+sum;
+		end
+		for i = 1:length(x1)
+		u1(i) = u1(i)./sum.^(1/2);
+		end
+		e1
+		
+		
+		plot(x1,u1)
+		\end{lstlisting}
+		\section{矩阵法解决一维方势阱问题}
+		\begin{lstlisting}	
+		%函数文件
+		function [lambda,x] = invpowerit(A,x,s,k)
+		As = A-s.*eye(size(A));
+		for j = 1:k
+		u = x/norm(x);
+		x = As\u;
+		lambda = u'*x;
+		end
+		lambda = (1./lambda)+s;
+		
+		%运行文件
+		clear all;clc;
+		n = 201;
+		h = 1/(n-1);
+		H = zeros(n,n);
+		for i = 2:n-1
+		for j = 1:n
+		if(i==j)
+		H(i,j) = -2;
+		H(i-1,j) = 1;
+		H(i+1,j) = 1;
+		end
+		end
+		end
+		H(1,1) = -2;
+		H(n,n) = -2;
+		H(2,1) = 1;
+		H(n-1,n) = 1;
+		
+		H = H*(-1/h^2);
+		
+		for i = 1:n
+		energy(i) = i.^2.*pi.^2;
+		s(i) = 0.9999999.*energy(i);
+		end
+		
+		
+		k = 100;
+		x = zeros([n n]);
+		save = rand(n,1);
+		for i = 1:n
+		[lambda(i),x(:,i)] = ...
+		invpowerit(H,save,s(i),k);
+		sum_of_square(i) = 0;
+		for j = 1:n-1
+		sum_of_square(i) = sum_of_square(i)...
+		+x(j,i).^2.*h;
+		end
+		for m = 1:n
+		x(m,i) = x(m,i)./...
+		sum_of_square(i).^(1/2);
+		end
+		end
+		
+		
+		figure
+		plot(linspace(-1,1,n),x(:,1));
+		figure
+		plot(linspace(-1,1,n),x(:,2));
+		figure
+		plot(linspace(-1,1,n),x(:,3));
+		figure
+		plot(linspace(-1,1,n),x(:,n));
+		\end{lstlisting}
+		\section{矩阵法解决一维二次势阱问题}
+		\begin{lstlisting}	
+		%函数文件
+		function [lambda,x] = invpowerit(A,x,s,k)
+		As = A-s.*eye(size(A));
+		for j = 1:k
+		u = x/norm(x);
+		x = As\u;
+		lambda = u'*x;
+		end
+		lambda = (1./lambda)+s;	
+		
+		%运行文件
+		clear all;clc;
+		n = 201;
+		h = 1/(n-1);
+		H = zeros(n,n);
+		V = zeros(n,n);
+		x = zeros([n n]);
+		for i = 2:n-1
+		for j = 1:n
+		if(i==j)
+		H(i,j) = -2;
+		H(i-1,j) = 1;
+		H(i+1,j) = 1;
+		end
+		end
+		end
+		H(1,1) = -2;
+		H(n,n) = -2;
+		H(2,1) = 1;
+		H(n-1,n) = 1;
+		for i = 1:n
+		q(i) = 2.*((i-1).*h-0.5);
+		V(i,i) = 2500.*(q(i).^2-1);
+		end
+		H = H*(-1/h^2)+V;
+		
+		for i = 1:n
+		energy(i) = -2535.5+70.75.*i;
+		s(i) = energy(i)-0.00000001;
+		end
+		
+		
+		k = 100;
+		
+		save = rand(n,1);
+		for i = 1:n
+		[lambda(i),x(:,i)] =...
+		invpowerit(H,save,s(i),k);
+		sum_of_square(i) = 0;
+		for j = 1:n-1
+		sum_of_square(i) = ...
+		sum_of_square(i)+x(j,i).^2.*h;
+		end
+		for m = 1:n
+		x(m,i) = ...
+		x(m,i)./sum_of_square(i).^(1/2);
+		end
+		end
+		
+		plot(q(:),x(:,1));
+		figure
+		plot(q(:),x(:,4));
+		plot(q(:),x(:,7));
+		\end{lstlisting}
+		\section{伪扩散法解决一维方势阱问题}
+		\begin{lstlisting}	
+		clc;clear all
+		N = 21;
+		h = 1./(N-1);
+		dt = 0.00051;
+		P = dt./(h.^2);
+		Tspan = 220;
+		phi = zeros(N,Tspan);
+		
+		for i = 2:N-1
+		x(i) = (i-1).*h;
+		phi(i,1) = x(i).*(1-x(i));
+		end
+	
+		x(1) = 0;
+		x(N) = 1;
+	
+		for i = 1:Tspan;
+		for j = 2:N-1
+		phi(j,i+1) = phi(j,i)+P.*...
+		(phi(j-1,i)+phi(j+1,i)...
+		-2.*phi(j,i));
+		end
+		sum_of_square(i) = 0;
+	
+		for j = 1:N-1
+		sum_of_square(i) = sum_of_square(i)...
+		+phi(j,i).^2.*h;
+		end
+		
+		for m = 1:N
+		phi(m,i) = (phi(m,i).^2./...
+		sum_of_square(i)).^(1/2);
+		end
+	
+		plot(x,phi(:,i)),pause(0.05)
+		
+	
+		E = 0;
+		for k = 2:N
+		E = E+(phi(k,i)-phi(k-1,i)).^2;
+		end
+		energy_value_num(i) = E./h;
+		end
+		
+		
+		\end{lstlisting}
+		\section{伪扩散法解决一维二次势阱问题}
+		\begin{lstlisting}	
+		%函数文件
+		function [x] = chase(a,b,c,f)
+		
+		N = length(f);
+		
+		x = zeros(1,N);
+		y = zeros(1,N);
+		d = zeros(1,N);
+		u = zeros(1,N);
+		
+		d(1) = b(1);
+		for i = 1:N-1
+		u(i) = c(i)./d(i);
+		d(i+1) = b(i+1)-a(i+1).*u(i);
+		end
+		
+		y(1) = f(1)./d(1);
+		for i = 2:N
+		y(i) = (f(i)-a(i).*y(i-1))./d(i);
+		end
+		
+		
+		x(N) = y(N);
+		for i = N-1:-1:1
+		x(i) = y(i)-u(i).*x(i+1);
+		end
+		
+		%运行文件
+		clc;clear all
+		N = 1001;
+		h = 2./(N-1);
+		dt = 0.0001;
+		P = dt./(h.^2);
+		Tspan = 1000;
+		phi = zeros(N,Tspan);
+		V(1) = 0;
+		V(N) = 0;
+		x = -1: h: 1;
+		
+		for i = 2:N-1
+		V(i) = -2500.*(0.5*x(i).^2-1);
+		phi(i,1) = (x(i)+1).*(1-x(i));
+		end
+		phi([1, end], :) = 0.0;
+		
+		%x(1) = -1;
+		%x(N) = 1;
+		
+		a = zeros(1,N-2) - P; a(1) = 0.0;
+		c = zeros(1,N-2) - P; c(end) = 0.0;
+		b = zeros(1,N-2) + 1.0 +...
+		 2*P - dt.*V(2:1:(N-1));
+		for i = 1:Tspan-1
+		phi(2:1:(N-1), i+1) =...
+		 chase(a, b, c, phi(2:1:(N-1), i));
+		sum_of_square = sum(phi(:,i+1).^2.0)*h;
+	
+		
+		phi(:,i+1) =...
+		 phi(:,i+1)./sqrt(sum_of_square);
+		
+	
+		E = 0;
+		for k = 2:N
+		E = E+0.5.*(phi(k,i)-phi(k-1,i)).^2./h...
+		+h.*V(k).*phi(k,i).^2;
+		end
+		energy_value_num(i) = E;
+		end
+		plot(x, phi(:, Tspan));
+		\end{lstlisting}	
+		\end{appendix}
+\end{document}
