@@ -1,0 +1,39 @@
+	\begin{itemize}
+\item 单周期收敛
+	
+	\begin{equation}
+	\begin{split}
+		x_{n+1}&=ax_{n}(1-x_n)=x_n\\
+		x_n&=1-\frac{1}{a}\\
+		x_n&=0
+	\end{split}
+	\end{equation}
+	
+	 $a\in[0,1]$时，$1-\frac{1}{a}<0$，舍去；可知$x_n$收敛至0；
+	\item 双周期收敛
+	
+	\begin{equation}
+	\begin{split}
+	x_{n+2}&=ax_{n+1}(1-x_{n+1})=a^2x_{n}(1-x_{n})(1-ax_{n}(1-x_{n}))\\
+	x_n&=1-\frac{1}{a}\\x_n&=0\\x_n&=\frac{1+a\pm \sqrt{a^2-2a-3}}{2a}
+	\end{split}
+	\end{equation}
+	
+	在$a\in [3,3.4496]$时，$x_n=1-\frac{1}{a},x_n=0$成为不稳定平衡点，$x_n$收敛至$x_n=\frac{1+a\pm \sqrt{a^2-2a-3}}{2a}$
+	\item 倍周期收敛
+	
+	确定再次分叉（振荡点大于等于8个）时，涉及到了更高阶方程的求解，只能进行数值求解。
+\end{itemize}
+\begin{align}
+%	\text{设外界出现微小微扰\Delta,有}\\
+	x &= x*+\Detla\\
+%	\text{则可写出}\\
+	x_{n+1}&=x^*+\Delta_{n+1}=f(x_n)=f(x^*+\Delta_{n})\nonumber\\
+	&=f(x^*)+f^'(x^*)\Delta+\frac{1}{2}\Detla^2+...\\
+%	\text{只保留1阶小量为}\\
+	\Delta_{n+1}&=(f^{'}_{*})\Delta_{n}=(f^{'}_{*})^{n}\Delta_{1}\\
+%	\text{所谓稳定性，即$\lim_{x \to 0}=0$。于是离散迭代映射的稳定性条件为}\\
+	\left|\frac{\Delta_{n+1}}{\Delta_{n}}\right|&=\left|f^{'}_{*}\right|<1\\
+%	\text{由稳定过渡到不稳定的临界点是}\\
+	\left|f_{*}^{'}\right|&=1\\
+\end{align}

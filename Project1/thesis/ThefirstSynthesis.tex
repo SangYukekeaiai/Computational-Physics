@@ -1,0 +1,729 @@
+\documentclass{article}
+\usepackage{ctex}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\graphicspath{{figure/}}
+\usepackage[section]{placeins}
+\usepackage{float}
+\usepackage{appendix}
+\usepackage{amstext}
+\usepackage{listings}
+\lstset{language=Matlab}
+\title{一维Logistic模型现象研究及其应用}
+\date{2020.3.9}
+\author{俞炀}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+一维Logistic方程：$x_{n+1} = a(x_n-x_{n}^{2})$中，通过改变参数$a$的值，在经过多次迭代后，$x_n$的值会因为$a$所给定的值的不同产生不同周期的震荡,出现倍周期分岔现象；对于同一$a$值，通过微调数列$x_n$的初值$x_1$，可发现随着n值的增大，$x_n$的图像之间会有明显的差异。对一维logistic方程的图像，x稳定震荡值随a变化的费根鲍姆图进行复刻并对其性质进行分析；最后将对于logistic模型的混沌现象的应用做一个简单介绍。
+
+\textbf{关键词：}一维logistic映射\qquad 费根鲍姆图 \qquad 倍周期分叉
+\end{abstract}
+
+\section{一维logistic方程的图像及其性质研究}
+根据一维Logistic方程：$x_{n+1} = a(x_n-x_{n}^{2})$，我们取$x_1=0.5$,对a进行分立取值。
+
+下图a至f分别为$a=0.500,a=2,.000,a=3.225,a=3.500,a=3.550,a=3.800$时，x在达到稳定状态后$(x>450)$随n的变化图像.
+
+由图像\ref{0.5}可知, $x_i$在迭代至稳定态之后，图像衰减收敛至0，未出现周期性震荡;
+
+由图像\ref{2.0}可知, $x_i$在迭代至稳定态之后，其值保持$x_i=0.5$不变;
+
+由图像\ref{3.225}可知, $x_i$在迭代至稳定态之后，其值在0.8062与0.5039之间做一个两周期的震荡;
+
+由图像\ref{3.5}可知, $x_i$在迭代至稳定态之后，其值在0.875，0.3828，0.8269，0.5009之间做一个四周期的震荡;
+
+由图像\ref{3.55}可知, $x_i$在迭代至稳定态之后，其值在0.3548，0.8127，0.5405，0.8817，0.3703，0.8278，0.506，0.8874之间做一个8周期的震荡;
+
+由图像\ref{3.8}可知, $x_i$在$x_{450}$之后始终未达到稳定态，一直在不停的震荡;
+
+\begin{figure}[H]
+	\centering
+	
+	\subfigure[a = 0.500]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{a=0.500.eps}
+			\label{0.5}
+			%\caption{fig1}
+		\end{minipage}%
+	}%
+	\subfigure[a = 2.000]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{a=2.000.eps}
+			\label{2.0}
+			%\caption{fig2}
+		\end{minipage}%
+	}%	%这个回车键很重要 \quad也可以
+\quad
+	\subfigure[a = 3.225]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{a=3.225.eps}
+			\label{3.225}
+			%\caption{fig2}
+		\end{minipage}
+	}%
+	\subfigure[a = 3.500]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{a=3.500.eps}
+			\label{3.5}
+			%\caption{fig2}
+		\end{minipage}
+	}%
+\quad	
+		\subfigure[a = 3.550]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{a=3.550.eps}
+			\label{3.55}
+			%\caption{fig2}
+		\end{minipage}
+	}%
+	\subfigure[a = 3.800]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{a=3.800.eps}
+			\label{3.8}
+			%\caption{fig2}
+		\end{minipage}
+	}%
+	\centering
+	\caption{在不同a值下x随n的变化曲线}
+	\label{1}
+\end{figure}
+
+由上图\ref{1}易得在不同a值之下，x达到稳定状态后的值以及振荡周期都发生了变化; 为了近一步研究a与稳定后的x值的关系，考虑a在区间$[0,4]$连续变化时稳定的x的值的分布情况。x稳定值在$a\in [0,4]$如图/ref{F}所示（即费根鲍姆图）（其中图\ref{F_1}为未修正下的matlab plot作图，图\ref{F_2}为经过减少点数、改变点的大小、散点作图的修正效果图。从图\ref{F}中可轻松看出，在$a\in (0,1)$中，x = 0; 在$a\in (0,3)$中,x只存在一个值；在$a\in (3,3.4495)$中，x存在2个值; 在$a\in (3.4496,3.5441)$中, x存在4个值; 在$a\in (3.5441,3.5644)$中x存在8个值; 在$a\in (3.5644,4]$中，x能取多个值，即接近混沌状态。
+
+
+
+
+\begin{figure}[H]
+	\centering
+	
+	\subfigure[修正前]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{Feigenbaum.eps}
+			\label{F_1}
+			%\caption{fig1}
+		\end{minipage}%
+	}%
+	\subfigure[修正后]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{Feigenbaum_2.eps}
+			\label{F_2}
+			%\caption{fig2}
+		\end{minipage}%
+	}%	%这个回车键很重要 \quad也可以
+	\centering
+	\caption{Feigenbaum图}
+	\label{F}
+\end{figure}
+
+通过改变$x_1$的初值，我们观察在不同a下，x随着n的变化。图\ref{x_v}展示了在不同的a值下x的初值从0.51到0.59变化过程中，迭代至稳定状态后x随n的变化以及不同初值之间的差别。由图像可唯象的得出，在$a\in(0,4)$中，在四次分叉点，八次分叉点以及以上处，x曲线相差越大。
+\begin{figure}[H]
+	\centering
+	
+	\subfigure[a = 0.500]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{0.500.eps}
+			\label{0.5_}
+			%\caption{fig1}
+		\end{minipage}%
+	}%
+	\subfigure[a = 2.000]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{2.000.eps}
+			\label{2.0_}
+			%\caption{fig2}
+		\end{minipage}%
+	}%	%这个回车键很重要 \quad也可以
+	\quad
+	\subfigure[a = 3.225]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{3.225.eps}
+			\label{3.225_}
+			%\caption{fig2}
+		\end{minipage}
+	}%
+	\subfigure[a = 3.500]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{3.500.eps}
+			\label{3.5_}
+			%\caption{fig2}
+		\end{minipage}
+	}%	
+	\quad
+	\subfigure[a = 3.550]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{3.550.eps}
+			\label{3.55_}
+			%\caption{fig2}
+		\end{minipage}
+	}%
+	\subfigure[a = 3.800]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{3.800.eps}
+			\label{3.8_}
+			%\caption{fig2}
+		\end{minipage}
+	}%
+
+	\centering
+	\caption{在不同a值下x随n的变化曲线}
+	\label{x_v}
+\end{figure}
+
+
+\section{对图像的理论说明及对一维logistic映射理论探究}
+	\subsection{对倍周期分岔现象的浅显理论解释}
+		\subsubsection{一些铺垫}
+			我们令f为一种映射，$x_{n} = f(x{n-1}) = f^{(n)}(x_0)$。
+			
+			当存在$x^*$这样的点，使得$x^* = f(x^*)$时，我们称其为不动点；
+			
+			其中稳定平衡点和不稳定平衡点均属于不动点，两者区别在于：在$x^*$上加上极小的微扰，看其是否能够返回到原不动点。其数学表述如下：
+
+			\begin{align}
+				&\text{设外界出现微小微扰$\Delta$,有}\nonumber\\
+				&x = x^{*}+ \Delta \\
+				&\text{则可写出}\nonumber\\
+				&x_{n+1}=x^*+\Delta_{n+1}=f(x_n)=f(x^*+\Delta_{n})\nonumber\\
+				&=f(x^*)+f^{'}(x^*)\Delta + \frac{1}{2}\Delta^{2} +...\\
+				&\text{只保留1阶小量为}\nonumber\\
+				&\Delta_{n+1}=(f^{'}_{*})\Delta_{n}=(f^{'}_{*})^{n}\Delta_{1}\\
+				&\text{所谓稳定性，即$\lim_{x \to 0}=0$。于是离散迭代映射的稳定性条件为}\nonumber\\
+				&\left|\frac{\Delta_{n+1}}{\Delta_{n}}\right|=\left|f^{'}_{*}\right|<1\\
+				&\text{由稳定过渡到不稳定的临界点是}\nonumber\\
+				&\left|f_{*}^{'}\right|=1
+			\end{align}
+			
+			当我们考虑映射周期m的稳定性时，定义：
+			\begin{align}
+			&\lambda = \left|\frac{df^{m}}{dx}\right| = \left|\prod_{i=1}^{m} f^{'}(x_{i})\right|\\
+			&\left| \lambda\right|<1 \qquad \text{吸引，稳定；}\nonumber\\
+			&\left| \lambda\right|>1 \qquad \text{排斥，不稳定；}\nonumber\\
+			&\left| \lambda\right|=1 \qquad \text{中性；}\nonumber\\
+			&\left| \lambda\right|=0 \qquad \text{超稳定。}\nonumber
+			\end{align}
+			
+			此处引入李雅普诺夫指数，即对于上式$\lambda$进行简易处理使其成为更易计算的一个公式，即：
+			\begin{equation}
+				\lambda = \lim_{N \to \infty}\frac{1}{N}\sum_{n=0}^{N-1}\ln \left|\frac{df}{dx}\right|_{x_{n}}
+			\end{equation}
+			由公式表达式易得，其将原式的连乘号取对数后化为连加求和，简便了计算，从而其盘踞也发生了变化，即$\lambda <0$时，其有稳定周期n;$\lambda = 0$,处于倍周期分叉点;混沌运动时，$\lambda<0$。
+			
+			由下图\ref{L}可知随着a的变化，$\lambda$的变化：
+				\begin{figure}[H]
+				\centering
+				\includegraphics[scale=0.5]{L}
+				\caption{指数$\lambda$随参数$\mu$的变化}\label{L}
+			\end{figure}
+			由图像可看出，前几个分叉点分别为：1，3，3.450。
+			
+		\subsection{图像分析及作图解释}
+			由图像可知，在x值达到稳定之后，其出现了那么几种情况：
+			\begin{itemize}
+				\item 收敛到确定的值(包括0)；
+				\item 在几个确定的值之间震荡；
+				\item 无规律的运动，即混沌现象。
+			\end{itemize}
+			我们对这几种情况分别进行考虑：
+		
+			\begin{itemize}
+				\item[1] 收敛到确定的值：
+				
+				\begin{equation}
+				x^{*} = kx^{*}(1-x*)
+				\end{equation}
+				解得:
+				\begin{equation}
+					\begin{split}
+						x^{*}&=1-\frac{1}{k}\\
+						\text{或}x^{*}&=0
+					\end{split}
+				\end{equation}
+				
+				求出k值的范围：
+				
+				由稳定性的$\lambda$判据，我们可计算k的临界值：
+				\begin{equation}
+					\begin{split}
+						\left|k(1-2x^{(1)})\right|=1
+					\end{split}
+				\end{equation}
+				
+				代入x的值，可得
+				\begin{equation}
+					\left|k-\frac{k}{2}(1-\frac{1}{k})\right|=1
+				\end{equation}
+				可得：
+				\begin{equation}
+					k = 3
+				\end{equation}
+				
+				可知$k \in (1,3)$
+				在$a\in (0,1)$中，不动点$x^{*}=0$，为其稳定平衡点；
+				
+				在$a\in (1,3)$中，$x^{*}=1-\frac{1}{k}$为其稳定平衡点，x=0为其不稳定平衡点，由上图\ref{2.0}，a = 0.5时，数列收敛至0.5，与理论吻合得很好；
+				\begin{figure}[H]
+					\centering
+					
+					\subfigure[a=0.500时的蛛网图]{
+						\begin{minipage}[t]{0.4\linewidth}
+							\centering
+							\includegraphics[width=2in]{s0.5.eps}
+							\label{s0.5}
+							%\caption{fig1}
+						\end{minipage}%
+					}%
+					\subfigure[a=0.5时的不动点函数]{
+						\begin{minipage}[t]{0.4\linewidth}
+							\centering
+							\includegraphics[width=2in]{r0.5.eps}
+							\label{r0.5}
+							%\caption{fig2}
+						\end{minipage}
+					}
+					\quad
+					\subfigure[a=2时的蛛网图]{
+						\begin{minipage}[t]{0.4\linewidth}
+							\centering
+							\includegraphics[width=2in]{s2.eps}
+							\label{s2}
+							%\caption{fig1}
+						\end{minipage}%
+					}%
+					\subfigure[a=2时的不动点函数]{
+						\begin{minipage}[t]{0.4\linewidth}
+							\centering
+							\includegraphics[width=2in]{r2.eps}
+							\label{r2.0}
+							%\caption{fig2}
+						\end{minipage}
+					}
+						\centering
+					\caption{在不同a值下x随n的变化曲线}
+					\label{收敛到确定值情况下的分析}
+					
+					
+				\end{figure}
+			
+					
+				\item[2] 在几个确定值之间震荡：
+				
+					\item[1)] 二周期振荡
+					二次映射$f^{(2)}$为：					
+					\begin{equation}
+						\begin{split}
+							&k^{2}[x_{1}^{(2)}(1-x_{1}^{(2)})][1-kx_{1}^{(2)}(1-x_{1}^{(2)})]
+						\end{split}
+					\end{equation}
+					由不动点方程:
+					\begin{equation}
+						\begin{split}
+							x_{1}^{2}=k^{2}[x_{1}^{(2)}(1-x_{1}^{(2)})][1-kx_{1}^{(2)}(1-x_{1}^{(2)})]
+						\end{split}
+					\end{equation}
+					即方程
+					\begin{equation}
+						\begin{split}
+							x^3-2x^2+(1+\frac{1}{k})x-(\frac{k^2-1}{k^3})=0
+						\end{split}
+					\end{equation}
+					解得：
+					\begin{equation}
+							x^{*}=\left\{
+							\begin{aligned}
+								&0\\
+								&1-\frac{1}{k}\\
+								&\frac{1}{2}(1+\frac{1}{k})-\frac{1}{2}\sqrt{(1+\frac{1}{k})(1-\frac{3}{k})}(x_1)\\
+								&\frac{1}{2}(1+\frac{1}{k})+\frac{1}{2}\sqrt{(1+\frac{1}{k})(1-\frac{3}{k})(x_2)}
+							\end{aligned}
+							\right.
+					\end{equation}
+					
+					求出k的取值范围：
+					
+					由稳定性的$\lambda$判据，我们可计算k的临界值：
+					\begin{equation}
+						\begin{split}
+							k^2(1-2x_1^{(2)})(1-2x_2^{2})=-1
+						\end{split}
+					\end{equation}
+					即：
+					\begin{equation}
+						\begin{split}
+							k^2-2k-5=0
+						\end{split}
+					\end{equation}
+					解得：
+					\begin{equation}
+						k=1+\sqrt{6}=3.4494897
+					\end{equation}
+					由此可得：$k\in [3,1+\sqrt{6}]$
+					
+					当k = 3.225时，由公式$x^3-2x^2+(1+\frac{1}{k})x-(\frac{k^2-1}{k^3})=0$可得，两个振荡点分别为：0.8062以及0.5039，与图\ref{0.5}符合得很好。
+					通过如下蛛网图及不动点函数零点，亦可得到两振荡点的值。
+					\begin{figure}[H]
+						\centering
+					
+					\subfigure[a=3.225时的蛛网图]{
+						\begin{minipage}[t]{0.4\linewidth}
+							\centering
+							\includegraphics[width=2in]{s3.225.eps}
+							\label{s3.225}
+							%\caption{fig1}
+						\end{minipage}%
+					}%
+					\subfigure[a=3.225时的不动点函数图]{
+						\begin{minipage}[t]{0.4\linewidth}
+							\centering
+							\includegraphics[width=2in]{r3.225.eps}
+							\label{r3.225}
+							%\caption{fig2}
+						\end{minipage}
+					}
+						\centering
+						\caption{在不同a值下x随n的变化曲线}
+						\label{在二周期震荡下的数据分析}
+					\end{figure}
+				由于选取的起始点为x=0.5，因此不能非常好的表现出其三个不动点和两个稳定平衡点；当选取起始x=0.1时有较好的体现。
+					
+					\item[2)] 四周期震荡
+					
+					其分析过程与二周期震荡类似，不再进行赘述，将蛛网图与不动点函数图罗列如下：
+					\begin{figure}[H]
+						\centering
+					
+					\subfigure[a=3.5时的蛛网图]{
+						\begin{minipage}[t]{0.4\linewidth}
+							\centering
+							\includegraphics[width=2in]{s3.5.eps}
+							\label{s3.5}
+							%\caption{fig1}
+						\end{minipage}%
+					}%
+					\subfigure[a=3.5时的不动点函数图]{
+						\begin{minipage}[t]{0.4\linewidth}
+							\centering
+							\includegraphics[width=2in]{r3.5.eps}
+							\label{r3.5}
+							%\caption{fig2}
+						\end{minipage}
+					}
+						\centering
+						\caption{在不同a值下x随n的变化曲线}
+						\label{四周期振荡下的数据分析}
+					\end{figure}
+					图\ref*{r3.5}中，由于拟合得不是非常好，所以并未出现4个与x轴的交点，需要进一步计算。
+
+	
+		\end{itemize}
+	\subsection{费根鲍姆$\delta$常数}
+	利用分叉点的$\mu$值，计算相邻分叉点的间距之比，所得的极限值叫费根鲍姆$\delta$常数。
+	\begin{equation}
+		F_{\delta}=\lim_{n \to \infty}\frac{\mu_{n}-\mu_{n-1}}{\mu_{n+1}-\mu_{n}}=4.669201661
+	\end{equation}
+	由我们之前所得出的数值进行计算可得：2周期分叉到4周期分叉与1周期分叉到2周期分叉的比值为4.751466；4周期分叉到8周期分叉与2周期分叉到4周期分叉的比值为4.65625;其趋势逐渐靠近4.669201661。
+	
+\section{关于复变函数迭代的一些简介}
+考虑复数迭代：
+\begin{equation}
+	Z_{k+1}=Z_{k}^{m}+C (k=0,1,2,...)
+\end{equation}
+当m = 2时，如果令$C = C_{0}$进行迭代，所得的Z集合称之为Julia集。如果取$Z = Z_0$，对不同的C进行迭代，所得的Z集合称之为Mandelbrot集。当m>2时，迭代的结果称之为广义Julia集和广义Mandelbrot集。利用Julia集和Mandelbrot集可绘制出极美丽的图形，后文将分别对两种集合及图形进行研究。
+	\subsection{Julia集}
+	在迭代式中取m = 2,C = 0,则有$Z_{k+1}=Z_{k}^{2}$,显然$\left|Z_{k+1}\right|=\left|Z_{k}\right|^{2}$,因此必存在三种情况：
+	\begin{itemize}
+		\item[(1)] 当$\left|Z_{k}\right|<1$时，经过多次迭代，Z将趋于零且是稳定的；
+		\item[(2)] 当$\left|Z_{k}\right|>1$时，经过多次迭代，Z将趋于无穷且是稳定的；
+		\item[(3)] 当$\left|Z_{k}\right|=1$时，经过多次迭代,Z仍在单位圆上。
+	\end{itemize}
+
+	因此，复平面可以分成两个区域，一个是由轨迹趋于零的点和趋于无穷的点组成的稳定集，另一个是单位圆上的点组成的集合，叫Julia集。
+	
+	当$C\neq 0$时，为了划分Julia集，可以规定一个正的常数M和迭代次数N，如果Z进行N次迭代后，仍有$\left|Z\right|\leq M$，则认为出现的该点属于Julia集，对于趋于内部的点也进行相同的处理。如果经过若干次迭代后，出现$\left|Z\right|> M$，则认为该点已逃离。根据达到逃离时需要的迭代次数对起始点进行分类，用不同颜色表征，可得到非常美丽的图案。
+	下图\ref{Julia}为不同C值下的图形。
+	\begin{figure}[H]
+		\centering
+		
+		\subfigure[C=0]{
+			\begin{minipage}[t]{0.4\linewidth}
+				\centering
+				\includegraphics[width=2in]{C1.eps}
+				\label{C1}
+				%\caption{fig1}
+			\end{minipage}%
+		}%
+		\subfigure[C=0.3+0.5i]{
+			\begin{minipage}[t]{0.4\linewidth}
+				\centering
+				\includegraphics[width=2in]{C2.eps}
+				\label{C2}
+				%\caption{fig2}
+			\end{minipage}
+		}
+	\quad 
+	
+		\subfigure[C=i]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{C3.eps}
+			\label{C3}
+			%\caption{fig2}
+		\end{minipage}
+		}
+		\subfigure[C=0.11+0.66i]{
+		\begin{minipage}[t]{0.4\linewidth}
+			\centering
+			\includegraphics[width=2in]{C4.eps}
+			\label{C4}
+			%\caption{fig2}
+		\end{minipage}
+		}
+		\centering
+		\caption{不同C值情况下的Julia集图案}
+		\label{Julia}
+	\end{figure}
+	如果m = 2,3,4,5,得到的是广义的Julia集。其中的一些图形如下图\ref{HJulia}所示:
+	\begin{figure}[H]
+		\centering
+	
+		\subfigure[m=2,C=0.32+0.5i]{
+			\begin{minipage}[t]{0.4\linewidth}
+				\centering
+				\includegraphics[width=2in]{C5.eps}
+				\label{C5}
+				%\caption{fig1}
+			\end{minipage}%
+		}%
+		\subfigure[m=3,C=0.2+1.05i]{
+			\begin{minipage}[t]{0.4\linewidth}
+				\centering
+				\includegraphics[width=2in]{C6.eps}
+				\label{C6}
+				%\caption{fig2}
+			\end{minipage}
+		}
+		\quad 
+	
+		\subfigure[m=4,C=0.4015+0.99i]{
+			\begin{minipage}[t]{0.4\linewidth}
+				\centering
+				\includegraphics[width=2in]{C7.eps}
+				\label{C7}
+				%\caption{fig2}
+			\end{minipage}
+		}
+		\subfigure[m=5,C=0.188+0.78603i]{
+			\begin{minipage}[t]{0.4\linewidth}
+				\centering
+				\includegraphics[width=2in]{C8.eps}
+				\label{C8}
+				%\caption{fig2}
+			\end{minipage}
+		}
+		\centering
+		\caption{不同m值不同C值下的广义Julia集图案}
+		\label{HJulia}
+	\end{figure}
+	
+	\subsection{Mandelbrot集}
+	在迭代式中，固定Z的初值，改变C的取值进行迭代计算，得到的即为Mandelbrot集。下图\ref{M}一个为Mandelbrot集图形以及其局部放大图：
+	\begin{figure}[H]
+		\centering
+	
+		\subfigure[Mandelbrot集]{
+			\begin{minipage}[t]{0.4\linewidth}
+				\centering
+				\includegraphics[width=2in]{M1.eps}
+				\label{M1}
+				%\caption{fig1}
+			\end{minipage}%
+		}%
+		\subfigure[局部放大图]{
+			\begin{minipage}[t]{0.4\linewidth}
+				\centering
+				\includegraphics[width=2in]{M2.eps}
+				\label{M2}
+				%\caption{fig2}
+			\end{minipage}
+		}
+		\centering
+		\caption{Mandelbrot集图形以及其局部放大图}
+		\label{M}
+	\end{figure}
+\section{关于一维logistic映射的一些应用}
+	\subsection{利用一维logistic映射的混沌现象产生伪随机数列}
+	混沌序列由混沌系统产生，而混沌系统则是一种复杂的非线性动力学系统。非线性动力学系统在一定的条件下会进入混沌状态，即出现确定的、类随机的、既非周期又不收敛的过程。根据混沌系统方程，只需调整系统参数与初值，即可产生一系列非相关、类随机、确定可再生的混沌序列。混沌序列是混沌运动的轨迹，具有遍历性、随机性、非周期性以及对系统参数与初值的敏感依赖性。混沌系统中的一维Logistic混沌映射结构简单、性能良好，是目前应用最为广泛的一种混沌映射，以其遍历性、对初值高
+	度敏感性的特点而备受关注。
+	
+	目前存在的主要问题是大部分的研究者把混沌行为产生的时间序列直接当成了完全的随机序列来应用。通过对一维Logistic映射的非线性混沌动力学特性进行分析，目前人类能够利用混沌伪随机序列的统计特性改进算法，从而获得优于一般的伪随机数列产生方法。该技术的主要工作是利用一维Logistic映射产生的混沌时间序列，加入反正弦与反余弦变换，对Logistic映射进行优化改进，从而提高伪随机数列的统计特性。
+	\subsection{基于图像像素值改变和位置置乱的混沌加密}
+	基于混沌序列的图像加密算法在图像加密中很常见，利用混沌的对初始值敏感性，使得攻击者难以破译图像信息。传统的图像置乱是将图像中的像素位置或者像素颜色打乱，如果不知道所使用的置乱变换，就很难恢复原始图像，但是基于初等矩阵变换是线性变换，保密性不高，利用混沌特性可以使得图像保密性增强。
+	基于图像像素值改变和位置置乱的混沌加密算法利用两个logistic方程，分别产生两个混沌序列．一个混沌序列对图像的像素值进行改变，另一个混沌序列对图像的像素位置置乱。选取两个不同的密钥.实验表明该算法有更好的安全性能、更强的抗攻击能力以及良好的加密效果。
+	\subsection{其他方面的应用}
+	\begin{itemize}
+		\item[a] 优化: 利用混沌运动的随机性、遍历性和规律性寻找最优点,可用于系统辨识、最优参数设计等众多方面。
+		\item[b] 神经网络: 将混沌与神经网络相融合,使神经网络由最初的混沌状态逐渐退化到一般的神经网络,利用中间过程混沌状态的动力学特性使神经网络逃离局部极小点,从而保证全局最优,可用于联想记忆、机器人的路径规划等。
+		\item[c] 图像数据压缩: 把复杂的图像数据用一组能产生混沌吸引子的简单动力学方程代替,这样只需记忆存储这一组动力学方程组的参数,其数据量比原始图像数据大大减少,从而实现了图像数据压缩。
+		\item[d]  高速检索: 利用混沌的遍历性可以进行检索,即在改变初值的同时,将要检索的数据和刚进入混沌状态的值相比较,检索出接近于待检索数据的状态。这种方法比随机检索或遗传算法具有更高的检索速度。
+		\item[e] 非线性时间序列的预测: 任何一个时间序列都可以看成是一个由非线性机制确定的输入输出系统,如果不规则的运动现象是一种混沌现象,则通过利用混沌现象的决策论非线性技术就能高精度地进行短期预测。
+		\item[f] 模式识别: 利用混沌轨迹对初始条件的敏感性,有可能使系统识别出只有微小区别的不同模式。
+		\item[g] 故障诊断: 根据由时间序列再构成的吸引子的集合特征和采样时间序列数据相比较,可以进行故障诊断。
+	\end{itemize}
+\begin{appendix}
+	\section{在不同a值下x随n的变化曲线代码}
+	\begin{lstlisting}
+	clear all;clc;
+	a=[0.500 2.000 3.225 3.500 3.550 3.800];
+	tic
+	for j = 1:1:6;
+	for i=1:1:509
+	x(1) = 0.9 ;
+	x(i+1) = a(j).*x(i).*(1-x(i));
+	end
+	k = 450:1:510;
+	figure(j);
+	plot(k,x(k));
+	end
+	toc
+	\end{lstlisting}
+	\section{费根鲍姆图代码(修正后)}
+	\begin{lstlisting}
+	clear all;clc;
+	a = [0:0.00001:4];
+	X = ones(510,400001);
+	X(1,:) = 0.5.*X(1,:);
+	tic
+	for j = 1:510
+	X(j+1,:) = a.*X(j,:).*(1-X(j,:));
+	if j>449&&j<459
+	scatter(a,X(j,:),0.000001,'b.');
+	hold on;
+	end
+	end
+	toc
+	\end{lstlisting}
+	
+	\section{Lyapunov指数$\lambda$随参数$\mu$变化图代码}
+	\begin{lstlisting}
+	clear all;clc;
+	x = 0.9; a = 0:0.0001:4; y = 0; N = 300;
+	for j = 1:N
+	x = a.*x.*(1-x);
+	df = log(abs(-2.*a.*x+a));
+	y = y + df;
+	end
+	plot(a,y/N)
+	line([0,4],[0,0])
+	\end{lstlisting}
+	
+	\section{蛛网图及不动点函数图代码(以四周期为例)}
+	\begin{itemize}
+	\item 蛛网图代码
+		
+	\begin{lstlisting}
+	clear all;clc;
+	format long;
+	x1 = [];a = 3.500;
+	x = 0:0.001:1;
+	y = a.*(a.*(a.*x.*(1-x)).*...
+	(1-a.*x.*(1-x))).*...
+	(1-(a.*(a.*x.*(1-x)).*...
+	(1-a.*x.*(1-x))));
+	plot(x,x);
+	hold on;
+	plot(x,y,'r');
+	hold on;
+		
+	for i = 1:100
+	hold on;
+	x1(1) = 0.5;
+	x1(i+1) =a.*(a.*(a.*x1(i).*(1-x1(i))).*...
+	(1-a.*x1(i).*(1-x1(i)))).*...
+	(1-(a.*(a.*x1(i).*(1-x1(i))).*...
+	(1-a.*x1(i).*(1-x1(i)))));
+	plot([x1(i),x1(i)],[x1(i),x1(i+1)]);
+	hold on;
+	plot([x1(i),x1(i+1)],[x1(i+1),x1(i+1)]);
+	hold on;
+	end
+	\end{lstlisting}
+		
+	\item 不动点函数图代码
+	\begin{lstlisting}
+	clc;clear all;
+	a = 3.500;
+	sym x;
+	x = 0:0.0001:1;
+	y = a.*(a.*(a.*x.*(1-x)).*...
+	(1-a.*x.*(1-x))).*...
+	(1-(a.*(a.*x.*(1-x)).*...
+	(1-a.*x.*(1-x))))-x;
+		
+	plot(x,y)
+	grid on;
+	%axis([0 1 0 1])
+	\end{lstlisting}
+	\end{itemize}
+	\section{Julia集图案代码(以\ref{C4}为例)}
+	\begin{lstlisting}
+	clear all;clc;
+	C = 0.11+0.66*i;
+	V = linspace(-2.0,2.0,400);
+	[Re,Im]=meshgrid(V);
+	Z = Re+i*Im;
+	B = 0;
+	for K = 1:100
+	B = B+(abs(Z)<=2);
+	Z = Z.^2+ C;
+	end;
+	imagesc(B);
+	colormap(jet);
+	axis equal
+	\end{lstlisting}
+	\section{Mandel集图案代码}
+	\begin{lstlisting}
+	clear all;clc;
+	x = linspace(-2.0,1.0,1000);
+	y = linspace(-1.5,1.5,1000);
+	[Re,Im]=meshgrid(x,y);
+	C = Re+i*Im;
+	B = 0;
+	Z = 0;
+	for l = 1:50
+	Z = Z.^2+ C;
+	B = B+(abs(Z)<=2);
+	end;
+	imagesc(B);
+	colormap(jet);
+	axis equal
+	\end{lstlisting}
+	
+\end{appendix}
+\begin{thebibliography}{6}
+		\bibitem{ref1}李彩虹,李贻斌,赵磊,张艳华,张新慧.一维Logistic映射混沌伪随机序列统计特性研究[A].计算机应用研究,1001—3695(2014)05—1403—04.
+		\bibitem{ref2}陈储培,李晶,邓洪敏.基于图像像素值改变和位置置乱的混沌加密[A].计算机应用,2015,35(S1):47-49.
+		\bibitem{ref3}唐驾时,欧阳克俭.logistic 模型的倍周期分岔控制.物理学报.1000-3290 2006 55(09) 4437-05.
+		\bibitem{ref4}许立炜.关于Logistic模型的倍周期收敛现象.[A].大学数学.1672—1454(2003)06—0108—06.
+		\bibitem{ref5}https://www.doc88.com/p-7963357545642.html.
+		\bibitem{ref6}唐　巍,李殿璞,陈学允.混沌理论及其应用研究.[O].电力系统及自动化.Apr. 10, 2000(67).
+		\bibitem{ref6}彭芳麟.计算物理学基础.高等教育出版社.2009.
+\end{thebibliography}
+\end{document}
