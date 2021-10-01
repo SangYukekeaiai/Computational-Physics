@@ -8,7 +8,11 @@ Changing the value of parameter an in the one-dimensional Logistic equation $x_{
 
 ### key word
 
-**One-dimensional logistic map	Feigenbaum diagram	period doubling bifurcation**
+**One-dimensional logistic map	**
+
+**Feigenbaum diagram	**
+
+**Period doubling bifurcation**
 
 ## Project 2
 
@@ -18,7 +22,9 @@ Hodgkin and Huxley utilized Cole's voltage clamp technique to gather a huge quan
 
 ### key word
 
-**Hodgkin-Huxley Model 	Runge-Kutta four-step method**
+**Hodgkin-Huxley Model **
+
+**Runge-Kutta four-step method**
 
 ## Project 3
 
@@ -28,7 +34,13 @@ The article discusses three distinct numerical techniques for solving eigenprobl
 
 ### key word
 
-**Stationary Schrodinger equation	Shooting method	Matrix method	Pseudo diffusion**
+**Stationary Schrodinger equation	**
+
+**Shooting method	**
+
+**Matrix method	**
+
+**Pseudo diffusion**
 
 ## Project 4
 
@@ -38,5 +50,9 @@ The article elaborates the spiral wave and its turbulence state production techn
 
 ### key word
 
-**Pattern dynamics	Spiral wave	Traveling wave method**
+**Pattern dynamics	**
+
+**Spiral wave	**
+
+**Traveling wave method**
 
